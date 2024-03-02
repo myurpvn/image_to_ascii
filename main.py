@@ -49,12 +49,13 @@ def generate_ascii_file(
 
 if __name__ == "__main__":
 
+    initial_check()
     resize_factor = 0.25
     pattern = "Images/*"
     file_list = glob.glob(pattern)
 
     for image_file in file_list:
-        image_name = image_file.split("/")[1]
+        image_name = image_file.split("/")[1].split(".")[0]
         image = Image.open(image_file)
         w, h = image.size
         new_size = (round((w * resize_factor)), round(h * resize_factor))
