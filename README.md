@@ -1,0 +1,1 @@
+A simple python program to generate ascii version of an image
