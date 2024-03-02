@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "image-to-ascii"
+version = "0.1.0"
+description = ""
+authors = ["myuR <myurpvn@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pillow = "^10.2.0"
+numpy = "^1.26.4"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

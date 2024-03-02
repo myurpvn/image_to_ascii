@@ -1,0 +1,5 @@
+.DS_Store
+.venv
+images/*
+resized_images/*
+ascii_files/*.txt
