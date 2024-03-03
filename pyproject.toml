@@ -9,6 +9,8 @@ readme = "README.md"
 python = "^3.10"
 pillow = "^10.2.0"
 numpy = "^1.26.4"
+structlog = "^24.1.0"
+typer = "^0.9.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -17,3 +19,7 @@ black = "^24.2.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.scripts]
+image-to-ascii = 'src.image_to_ascii.main:app'

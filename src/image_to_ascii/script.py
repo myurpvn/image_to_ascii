@@ -1,15 +1,18 @@
 from PIL import Image
 import os
 import glob
-from typing import Any
+import structlog
+from io import TextIOWrapper
 from PIL.Image import Image as ImageType
 
+logger = structlog.get_logger()
 
-def write_to_file(file_cursor: Any, string: str) -> None:
+
+def write_to_file(file_cursor: TextIOWrapper, string: str) -> None:
     file_cursor.write(string)
 
 
-def initial_check() -> None:
+def check_dir() -> None:
     for dir in ["images", "resized_images", "ascii_files"]:
         if not os.path.exists(dir):
             os.mkdir(dir)
@@ -46,20 +49,32 @@ def generate_ascii_file(
                     write_to_file(f, "#")
             write_to_file(f, "\n")
 
+    logger.info("Generated ASCII file", destination=filepath)
 
-if __name__ == "__main__":
 
-    initial_check()
+def job():
+    check_dir()
     resize_factor = 0.25
     pattern = "Images/*"
     file_list = glob.glob(pattern)
 
-    for image_file in file_list:
-        image_name = image_file.split("/")[1].split(".")[0]
+    logger.info("Looping over Images directory")
+
+    for index, image_file in enumerate(file_list):
+
+        image_name, image_type = image_file.split("/")[1].split(".")
+        logger.info(
+            f"processing file {index+1} of {len(file_list)}",
+            image=image_name,
+            type=image_type,
+        )
         image = Image.open(image_file)
         w, h = image.size
         new_size = (round((w * resize_factor)), round(h * resize_factor))
         resized_image = image.resize(new_size)
-        resized_image.save(f"resized_images/{image_name}.jpg")
+        resized_image.save(f"resized_images/{image_name}.{image_type}")
+        logger.info(
+            "Saved resized image", file=f"resized_images/{image_name}.{image_type}"
+        )
         gray_image = resized_image.convert("L")
         generate_ascii_file(gray_image, image_name, new_size)
