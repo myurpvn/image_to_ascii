@@ -28,9 +28,9 @@ def generate_ascii_file(
         os.remove(filepath)
 
     with open(filepath, "a+") as f:
-        for i in range(size[0]):
-            for j in range(size[1]):
-                pixel_val = image.getpixel((j, i))
+        for y in range(size[1]):
+            for x in range(size[0]):
+                pixel_val = image.getpixel((x, y))
                 if pixel_val in range(32):
                     write_to_file(f, "!")
                 elif pixel_val in range(32, 64):
@@ -70,6 +70,7 @@ def job():
         )
         image = Image.open(image_file)
         w, h = image.size
+        logger.info("image dimensions: ", width=w, height=h)
         new_size = (round((w * resize_factor)), round(h * resize_factor))
         resized_image = image.resize(new_size)
         resized_image.save(f"resized_images/{image_name}.{image_type}")
