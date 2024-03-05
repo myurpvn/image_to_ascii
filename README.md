@@ -9,7 +9,7 @@ A simple python program to generate ascii version of an image
 
  2. Install dependencies
 `poetry install --without dev`
- 3. Create `/images` folder in project folder
+ 3. Create `/images` folder in project directory
 
  4. Place images to convert inside `/image` folder  
 
