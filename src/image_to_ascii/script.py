@@ -1,11 +1,11 @@
 from PIL import Image
 import os
 import glob
-import structlog
+
 from io import TextIOWrapper
 from PIL.Image import Image as ImageType
 
-logger = structlog.get_logger()
+from src.image_to_ascii.logger import logger
 
 
 def write_to_file(file_cursor: TextIOWrapper, string: str) -> None:
@@ -49,7 +49,7 @@ def generate_ascii_file(
                     write_to_file(f, "#")
             write_to_file(f, "\n")
 
-    logger.info("Generated ASCII file", destination=filepath)
+    logger.info("Generated ASCII file", filepath=filepath)
 
 
 def job():
@@ -64,18 +64,18 @@ def job():
 
         image_name, image_type = image_file.split("/")[1].split(".")
         logger.info(
-            f"processing file {index+1} of {len(file_list)}",
+            f"Processing image {index+1} of {len(file_list)}",
             image=image_name,
             type=image_type,
         )
         image = Image.open(image_file)
         w, h = image.size
-        logger.info("image dimensions: ", width=w, height=h)
+        logger.info("Image dimensions: ", width=w, height=h)
         new_size = (round((w * resize_factor)), round(h * resize_factor))
         resized_image = image.resize(new_size)
         resized_image.save(f"resized_images/{image_name}.{image_type}")
         logger.info(
-            "Saved resized image", file=f"resized_images/{image_name}.{image_type}"
+            "Saved resized image", filepath=f"resized_images/{image_name}.{image_type}"
         )
         gray_image = resized_image.convert("L")
         generate_ascii_file(gray_image, image_name, new_size)
