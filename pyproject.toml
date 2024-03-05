@@ -22,4 +22,4 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.poetry.scripts]
-image-to-ascii = 'src.image_to_ascii.main:app'
+image-to-ascii = 'src.image_to_ascii.__main__:app'
