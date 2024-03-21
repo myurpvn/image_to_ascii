@@ -4,3 +4,4 @@ __pycache__
 images/*
 resized_images/*
 ascii_files/*.txt
+.idea
