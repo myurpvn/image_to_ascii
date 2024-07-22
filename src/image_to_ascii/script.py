@@ -4,6 +4,7 @@ import glob
 
 from io import TextIOWrapper
 from PIL.Image import Image as ImageType
+from typing import List
 
 from src.image_to_ascii.logger import logger
 
@@ -32,50 +33,59 @@ def generate_ascii_file(
             for x in range(size[0]):
                 pixel_val = image.getpixel((x, y))
                 if pixel_val in range(32):
-                    write_to_file(f, "!")
+                    write_to_file(f, "O")
                 elif pixel_val in range(32, 64):
-                    write_to_file(f, "@")
+                    write_to_file(f, "<")
                 elif pixel_val in range(64, 96):
-                    write_to_file(f, "/")
+                    write_to_file(f, ">")
                 elif pixel_val in range(96, 128):
-                    write_to_file(f, "}")
+                    write_to_file(f, "o")
                 elif pixel_val in range(128, 160):
-                    write_to_file(f, "(")
+                    write_to_file(f, "o")
                 elif pixel_val in range(160, 192):
-                    write_to_file(f, "|")
+                    write_to_file(f, "<")
                 elif pixel_val in range(192, 224):
-                    write_to_file(f, "*")
+                    write_to_file(f, ">")
                 else:
-                    write_to_file(f, "#")
+                    write_to_file(f, "|")
             write_to_file(f, "\n")
 
     logger.info("Generated ASCII file", filepath=filepath)
 
 
-def job():
+def job(resize_factor: float, resize: List[int], file: str):
     check_dir()
-    resize_factor = 0.25
-    pattern = "Images/*"
+    resize_factor
+    pattern = "images/*"
     file_list = glob.glob(pattern)
 
     logger.info("Looping over Images directory")
 
     for index, image_file in enumerate(file_list):
 
-        image_name, image_type = image_file.split("/")[1].split(".")
-        logger.info(
-            f"Processing image {index+1} of {len(file_list)}",
-            image=image_name,
-            type=image_type,
-        )
-        image = Image.open(image_file)
-        w, h = image.size
-        logger.info("Image dimensions: ", width=w, height=h)
-        new_size = (round((w * resize_factor)), round(h * resize_factor))
-        resized_image = image.resize(new_size)
-        resized_image.save(f"resized_images/{image_name}.{image_type}")
-        logger.info(
-            "Saved resized image", filepath=f"resized_images/{image_name}.{image_type}"
-        )
-        gray_image = resized_image.convert("L")
-        generate_ascii_file(gray_image, image_name, new_size)
+        if file is None or file.lower() in image_file.lower():
+
+            image_name, image_type = image_file.split("/")[1].split(".")
+            logger.info(
+                f"Processing image {index+1} of {len(file_list)}",
+                image=image_name,
+                type=image_type,
+            )
+            image = Image.open(image_file)
+            w, h = image.size
+            logger.info("Image dimensions: ", width=w, height=h)
+            if resize[0] is not None:
+                new_size = resize
+            else:
+                new_size = (round((w * resize_factor)), round(h * resize_factor))
+            resized_image = image.resize(new_size)
+            logger.info(
+                "Resized Image dimensions: ", width=new_size[0], height=new_size[1]
+            )
+            resized_image.save(f"resized_images/{image_name}.{image_type}")
+            logger.info(
+                "Saved resized image",
+                filepath=f"resized_images/{image_name}.{image_type}",
+            )
+            gray_image = resized_image.convert("L")
+            generate_ascii_file(gray_image, image_name, new_size)
