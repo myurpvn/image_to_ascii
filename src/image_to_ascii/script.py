@@ -2,21 +2,21 @@ from PIL import Image
 import os
 import glob
 
-from io import TextIOWrapper
+from typing_extensions import Any
 from PIL.Image import Image as ImageType
 from typing import List
 
 from src.image_to_ascii.logger import logger
 
 
-def write_to_file(file_cursor: TextIOWrapper, string: str) -> None:
+def write_to_file(file_cursor: Any, string: str) -> None:
     file_cursor.write(string)
 
 
 def check_dir() -> None:
-    for dir in ["images", "resized_images", "ascii_files"]:
-        if not os.path.exists(dir):
-            os.mkdir(dir)
+    for directory in ["images", "resized_images", "ascii_files"]:
+        if not os.path.exists(directory):
+            os.mkdir(directory)
 
 
 def generate_ascii_file(
