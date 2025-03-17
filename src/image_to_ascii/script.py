@@ -1,10 +1,9 @@
-from PIL import Image
-import os
 import glob
+import os
 
-from typing_extensions import Any
+from PIL import Image
 from PIL.Image import Image as ImageType
-from typing import List
+from typing_extensions import Any
 
 from src.image_to_ascii.logger import logger
 
@@ -53,11 +52,11 @@ def generate_ascii_file(
     logger.info("Generated ASCII file", filepath=filepath)
 
 
-def job(resize_factor: float, resize: List[int], file: str):
+def job(resize_factor: float, resize: tuple[int, int], file: str):
+
     check_dir()
-    resize_factor
     pattern = "images/*"
-    file_list = glob.glob(pattern)
+    file_list: list[str] = glob.glob(pattern)
 
     logger.info("Looping over Images directory")
 
@@ -74,18 +73,26 @@ def job(resize_factor: float, resize: List[int], file: str):
             image = Image.open(image_file)
             w, h = image.size
             logger.info("Image dimensions: ", width=w, height=h)
-            if resize[0] is not None:
+
+            new_size: tuple[int, int] = tuple()
+            if len(resize) != 0:
                 new_size = resize
             else:
-                new_size = (round((w * resize_factor)), round(h * resize_factor))
+                new_size = (
+                    round(w * resize_factor),
+                    round(h * resize_factor),
+                )
+
             resized_image = image.resize(new_size)
             logger.info(
                 "Resized Image dimensions: ", width=new_size[0], height=new_size[1]
             )
+
             resized_image.save(f"resized_images/{image_name}.{image_type}")
             logger.info(
                 "Saved resized image",
                 filepath=f"resized_images/{image_name}.{image_type}",
             )
+
             gray_image = resized_image.convert("L")
             generate_ascii_file(gray_image, image_name, new_size)
